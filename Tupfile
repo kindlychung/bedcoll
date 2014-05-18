@@ -1,0 +1,7 @@
+include_rules
+
+# : foreach src/*.cpp  |> g++ %f $(CFLAGS) -c -o %o |> obj/%B.o
+# : main.cpp  |> clang %f $(CFLAGS) -c -o %o |> obj/%B.o
+# : |> clang main.cpp $(CFLAGS) -lboost_program_options -lboost_regex -lboost_system -lboost_filesystem -larmadillo -larpack -llapack -lblas -o %o |> binmain
+: foreach src/*.cpp |> clang++ %f $(CFLAGS) -c -o %o |> obj/%B.o
+: obj/*.o |> clang++ %f $(CFLAGS) $(linkflags)  -o %o |> collbin
