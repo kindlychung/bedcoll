@@ -16,12 +16,13 @@ int main(int argc, char *argv[])
     po::options_description desc("Calculate collapsed genotype from plink .bed file.");
 
     std::string bfile;
-    int nshift_max;
     int nshift_min;
+    int nshift_max;
     desc.add_options()
+    ("allinram,a", "Read the whole bed file into RAM, faster, but might not be a good idea unless you have a lot of RAM")
     ("bfile,b", po::value<std::string>(&bfile)->required(), ".bed filepath")
-    ("nshift_max,n", po::value<int>(&nshift_max)->required(), "Max number of SNPs to shift")
     ("nshift_min,m", po::value<int>(&nshift_min)->required(), "Min number of SNPs to shift")
+    ("nshift_max,n", po::value<int>(&nshift_max)->required(), "Max number of SNPs to shift")
     ("help,h", "print help")
     ;
 
@@ -39,8 +40,16 @@ int main(int argc, char *argv[])
     QDir bpath = QDir::currentPath();
     QString bpath_qstr = bpath.filePath(bfile_qstr);
 
-    BedColl mColl(bpath_qstr.toStdString(), false);
-    mColl.collapseSeqShift(nshift_min, nshift_max);
+    if(vm.count("allinram"))
+    {
+        BedColl mColl(bpath_qstr.toStdString(), true);
+        mColl.collapseSeqShift(nshift_min, nshift_max);
+    } else
+    {
+        BedColl mColl(bpath_qstr.toStdString(), false);
+        mColl.collapseSeqShift(nshift_min, nshift_max);
+    }
+
     return 0;
 }
 

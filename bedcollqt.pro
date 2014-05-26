@@ -8,7 +8,7 @@ QT       += core
 
 QT       -= gui
 
-TARGET = bedcollqt
+TARGET = bedcoll
 CONFIG   += console
 CONFIG   -= app_bundle
 QMAKE_CC = clang
