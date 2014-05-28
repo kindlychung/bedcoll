@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <boost/filesystem.hpp>
 #include <iostream>
 #include <algorithm>
@@ -18,13 +19,17 @@ public:
     off_t bytes_read = 0;
     off_t bed_filesize = 0;
     off_t snp_iter = 5000;
+
     boost::filesystem::path fstem;
     boost::filesystem::path fbranch;
     std::string bedfn;
     std::string bimfn;
     std::string famfn;
     bool allinram = false;
-    FILE *file_in;
+
+    FILE *file_in = 0;
+    FILE *outfile = 0;
+
     BedColl(std::string fn, bool);
     ~BedColl();
     void collapseSingleShift(off_t nshift);
