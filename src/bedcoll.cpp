@@ -101,11 +101,9 @@ void BedColl::collapseSingleShift(off_t nshift)
             off_t nsnp_read = nsnp - nshift;
             off_t n_iter = (off_t) nsnp_read / snp_iter;
             off_t n_remain = nsnp_read % snp_iter;
-            off_t bytes_snp = 2;
             off_t bytes_iter = snp_iter * bytes_snp;
             off_t bytes_remain = n_remain * bytes_snp;
             off_t bytes_shift = nshift * bytes_snp;
-            off_t bytes_res = nsnp_read * bytes_snp;
             off_t bytes_all_iters = n_iter * bytes_iter;
 
 
