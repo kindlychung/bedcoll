@@ -5,17 +5,6 @@ import os
 import subprocess
 import shutil
 
-helpmsg = """
-Usage:
-checkcoll BED_FILE SKIP
-
-Commandline Arguments:
-BED_FILE: the result .bed file of collapsing
-SKIP:     number of SNPs to skip (sometimes you don't want to check them all)
-"""
-if "-h" in sys.argv or "--help" in sys.argv:
-    print(helpmsg)
-    exit(0)
 
 
 bitsdict = {
@@ -45,17 +34,6 @@ def countlines(fname):
             pass
     return i + 1
 
-if len(sys.argv) == 3:
-    nskip = int(sys.argv[2])
-elif len(sys.argv) == 2:
-    nskip = 0
-else:
-    sys.exit("Invalid commandline arguments!")
-
-shiftpath = sys.argv[1]
-
-# nskip = 0
-# shiftpath = "test_data/plink_simple/test_shift_0001.bed"
 
 shiftstem, ext = os.path.splitext(shiftpath)
 stempath, nshift = shiftstem.split("_shift_")
@@ -63,6 +41,8 @@ nshift = int(nshift)
 bedpath = stempath + ".bed"
 bimpath = stempath + ".bim"
 fampath = stempath + ".fam"
+shutil.copy(bedpath, "/tmp/")
+bedpath1 = os.path.join("/tmp", os.path.basename(bedpath))
 
 nsnp = countlines(bimpath)
 nindiv = countlines(fampath)
@@ -92,7 +72,7 @@ SNPs skipped:          {}
 
 logpath = "/tmp/checkcoll.log"
 try:
-    with open(bedpath, "rb") as fh1, open(bedpath, "rb") as fh2, open(shiftpath, "rb") as fh3, open(logpath, "w+") as logfh:
+    with open(bedpath, "rb") as fh1, open(bedpath1, "rb") as fh2, open(shiftpath, "rb") as fh3, open(logpath, "w+") as logfh:
         fh1.seek(3 + bytes_skip)
         fh2.seek(3 + bytes_skip + bytes_shift)
         fh3.seek(3 + bytes_skip)
@@ -134,4 +114,4 @@ except KeyboardInterrupt:
 except:
     print("Unknown error ocurred...")
 finally:
-    print("Check finished.")
+    os.remove(bedpath1)
