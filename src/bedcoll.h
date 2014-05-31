@@ -1,11 +1,13 @@
 #pragma once
 
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 #include <iostream>
+#include <fstream>
 #include <algorithm>
-#include <QString>
 #include "util.h"
 #include "error_enum.h"
 #include "collgen_memo.h"

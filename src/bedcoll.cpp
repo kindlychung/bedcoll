@@ -55,16 +55,60 @@ void BedColl::collapseSingleShift(off_t nshift)
     unsigned char *remain_buffer = 0;
     unsigned char *collres = 0;
 
-    QString outf_leaf;
-    outf_leaf.sprintf("_shift_%04d.bed", (int)nshift);
-    auto fout = fbranch / (fstem.string() + outf_leaf.toStdString());
+    off_t bytes_shift = bytes_snp * nshift;
+    off_t bytes_left = bytes_read - bytes_shift;
+    off_t nsnp_left = nsnp - nshift;
+
+    try {
+        // output fam file path
+        boost::format outfam_leaf("_shift_%04d.fam");
+        outfam_leaf % (int)nshift;
+        auto famout = fbranch / (fstem.string() + outfam_leaf.str());
+        auto fam_shift_fn = famout.string();
+        // create a symlink for fam file
+        int famlink_ret = symlink(famfn.c_str(), fam_shift_fn.c_str());
+        if (famlink_ret != 0) {
+            throw "Failed to create symlink for fam file!";
+        }
+
+        // output bim file path
+        boost::format outbim_leaf("_shift_%04d.bim");
+        outbim_leaf % (int)nshift;
+        auto bimout = fbranch / (fstem.string() + outbim_leaf.str());
+        auto bim_shift_fn = bimout.string();
+        std::string bim_line;
+        ifstream bim_fh;
+        bim_fh.open(bimfn);
+        ofstream bim_shift_fh;
+        bim_shift_fh.open(bim_shift_fn);
+        if (bim_fh.is_open() and bim_shift_fh.is_open()) {
+            for (off_t i = 0; i < nsnp_left; i++) {
+                getline(bim_fh, bim_line);
+                bim_shift_fh << bim_line << "\n";
+            }
+            bim_fh.close();
+            bim_shift_fh.close();
+        } else {
+            throw "Cannot open bim file and / or shift bim file!";
+        }
+    }
+    catch(const string& e) {
+        cerr << e << endl;
+    }
+    catch(...) {
+    }
+
+
+
+    // output bed file path
+    boost::format outf_leaf("_shift_%04d.bed");
+    outf_leaf % (int)nshift;
+    auto fout = fbranch / (fstem.string() + outf_leaf.str());
     auto outfn = fout.string();
 
-    off_t bytes_shift = bytes_snp * nshift;
     if (allinram == true) {
         try {
             // see the documentation picture on flickr
-            off_t bytes_left = bytes_read - bytes_shift;
             buffer = (unsigned char *)malloc(bytes_read);
             if (!buffer) {
                 fprintf(stderr, "Memory error!");
@@ -90,8 +134,7 @@ void BedColl::collapseSingleShift(off_t nshift)
             free(collres);
         } catch (const std::string& s) {
             cerr << s << endl;
-        }
-        catch (...) {
+        } catch (...) {
             cerr << "Unknown error..." << endl;
             free(buffer);
             free(collres);
@@ -142,8 +185,7 @@ void BedColl::collapseSingleShift(off_t nshift)
             free(res_buffer_remain);
         } catch (const std::string& e_string) {
             cerr << e_string << endl;
-        }
-        catch (...) {
+        } catch (...) {
             cerr << "Unknown error..." << endl;
             free(buffer);
             free(res_buffer);
