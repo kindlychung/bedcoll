@@ -6,6 +6,7 @@ import subprocess
 import shutil
 import glob
 import random
+from itertools import islice
 
 
 class Checkcoll:
@@ -25,12 +26,12 @@ class Checkcoll:
             self.largest_nshift = self.nshift_stem(self.shift_files[-1])[1]
         else:
             self.largest_nshift = 0
-        
+
         self.corrupt_filelist = []
-        
+
         # if bimpath not found, raise exception
         # if fampath not found, raise exception
-        
+
         self.greet = """
         bed file:           {}
         bim file:           {}
@@ -78,7 +79,7 @@ class Checkcoll:
         stempath, nshift = shiftstem.split("_shift_")
         nshift = int(nshift)
         return (shiftstem, nshift)
-    
+
     def checkcoll(self, shiftpath, nskip, nsnp_to_check):
         shiftstem, nshift = self.nshift_stem(shiftpath)
         logpath = shiftstem + ".log"
@@ -130,36 +131,36 @@ class Checkcoll:
                                 skip_rest = True
 
                     printout = """
-                    Collapsed bed file:     {}
-                    Shift width:            {}
-                    SNPs skipped:           {}
-                    Right results count:    {}
-                    Wrong results count:    {}
+        Collapsed bed file:     {}
+        Shift width:            {}
+        SNPs skipped:           {}
+        Right results count:    {}
+        Wrong results count:    {}
                     """.format(
                         os.path.basename(shiftpath),
                         nshift, nskip, n_right, n_wrong)
                     tmp = subprocess.call("clear", shell=True)
                     print(self.greet)
                     print(printout)
-                    
+
                 if n_wrong > 0 and os.path.basename(shiftpath) not in self.corrupt_filelist:
                     self.corrupt_filelist.append(os.path.basename(shiftpath))
-                    
+
         except KeyboardInterrupt:
             print("\n\n\nChecking process ended by your request. \nHave a nice day, :-)")
         finally:
             print("Check finished.")
-            
+
     def checkall(self, ncheck_each=None):
         if not self.shift_files:
             raise Exception("Collapsed genotype files have not been generated yet, nothing to check.")
         if ncheck_each != None and ncheck_each > self.nsnp - self.largest_nshift:
             raise Exception("ncheck_each too large. ")
-        
+
         for shiftpath in self.shift_files:
             shiftstem, nshift = self.nshift_stem(shiftpath)
             snp_pool = range(self.nsnp - nshift - 1)
-            
+
             ncheck_each_i = 1
             if ncheck_each == None:
                 if len(snp_pool) <= 10:
@@ -168,7 +169,7 @@ class Checkcoll:
                     ncheck_each_i = 10
             else:
                 ncheck_each_i = ncheck_each
-                
+
             snp_sample = random.sample(snp_pool, ncheck_each_i)
             # if you skip 0, then you are at the first SNP, and so on...
             for snp in snp_sample:
@@ -179,7 +180,7 @@ class Checkcoll:
                 print(f)
         else:
             print("I didn't see anything abnormal.")
-            
+
     def bedinfo(self):
         bedsize = os.stat(self.bedpath).st_size
         bedsize_est = self.nsnp * self.bytes_snp + 3
@@ -188,4 +189,24 @@ class Checkcoll:
             print("Size of bed file agrees with bim and fam files.")
         else:
             raise Exception("Size of bed file does not agree with bim and fam files!")
-   
+
+    def bimfamgen(self):
+        if self.shift_files:
+            for shiftf in self.shift_files:
+                shiftstem, nshift = self.nshift_stem(shiftf)
+                nsnp_left   = self.nsnp - nshift
+
+                shiftbim = shiftstem + ".bim"
+                shiftfam = shiftstem + ".fam"
+                if os.path.isfile(shiftbim):
+                    os.remove(shiftbim)
+                if os.path.isfile(shiftfam):
+                    os.remove(shiftfam)
+
+                os.symlink(self.fampath, shiftfam)
+                with open(shiftbim, "w") as shiftbim_fh, open(self.bimpath, "r") as bim_fh:
+                    first_snps = "".join(list(islice(bim_fh, nsnp_left)))
+                    shiftbim_fh.write(first_snps)
+        else:
+            print("There are no collapsed genotype files, why do you want to generate bim and fam files then?")
+

@@ -5,45 +5,55 @@ using namespace std;
 BedColl::BedColl(std::string fn, bool allinram) :
     allinram(allinram)
 {
-    boost::filesystem::path fpath(fn);
-    fstem = fpath.stem();
-    fbranch = fpath.branch_path();
-    auto fbed = fbranch / (fstem.string() + ".bed");
-    auto fbim = fbranch / (fstem.string() + ".bim");
-    auto ffam = fbranch / (fstem.string() + ".fam");
-    bedfn = fbed.string();
-    bimfn = fbim.string();
-    famfn = ffam.string();
+    try {
+        boost::filesystem::path fpath(fn);
+        fstem = fpath.stem();
+        fbranch = fpath.branch_path();
+        auto fbed = fbranch / (fstem.string() + ".bed");
+        auto fbim = fbranch / (fstem.string() + ".bim");
+        auto ffam = fbranch / (fstem.string() + ".fam");
+        bedfn = fbed.string();
+        bimfn = fbim.string();
+        famfn = ffam.string();
 
-    nsnp = countlines(bimfn);
-    nindiv = countlines(famfn);
-    bytes_snp = ceil(nindiv / 4.0);
-    bytes_read = bytes_snp * nsnp;
-    bed_filesize = fileSize(bedfn);
+        nsnp = countlines(bimfn);
+        nindiv = countlines(famfn);
+        bytes_snp = ceil(nindiv / 4.0);
+        bytes_read = bytes_snp * nsnp;
+        bed_filesize = fileSize(bedfn);
 
-    if (bed_filesize != (bytes_read + 3)) {
-        cout << "error initialization" << endl;
-        cout << bed_filesize << endl;
-        cout << nsnp << endl;
-        cout << nindiv << endl;
-        cout << bytes_read << endl;
-        throw conflict_bed_bim_fam;
-    }
+        if (bed_filesize != (bytes_read + 3)) {
+            cout << "error initialization" << endl;
+            cout << bed_filesize << endl;
+            cout << nsnp << endl;
+            cout << nindiv << endl;
+            cout << bytes_read << endl;
+            throw conflict_bed_bim_fam;
+        }
 
-    file_in = fopen(bedfn.c_str(), "rb");
-    if (!file_in) {
-        throw file_open_error;
+        file_in = fopen(bedfn.c_str(), "rb");
+        if (!file_in) {
+            throw file_open_error;
+        }
+    } catch (const string& e) {
+        cerr << e << endl;
+    } catch (...) {
     }
 }
 
 BedColl::~BedColl()
 {
-    cout << "Destroyed!" << endl;
-    if (fclose(file_in) != 0) {
-        throw file_close_error;
-    }
-    if (fclose(outfile) != 0) {
-        throw file_close_error;
+    try {
+        cout << "..............\n";
+        if (fclose(file_in) != 0) {
+            throw file_close_error;
+        }
+        if (fclose(outfile) != 0) {
+            throw file_close_error;
+        }
+    } catch (const string& e) {
+        cerr << e << endl;
+    } catch (...) {
     }
 }
 
@@ -91,11 +101,9 @@ void BedColl::collapseSingleShift(off_t nshift)
         } else {
             throw "Cannot open bim file and / or shift bim file!";
         }
-    }
-    catch(const string& e) {
+    } catch (const string& e) {
         cerr << e << endl;
-    }
-    catch(...) {
+    } catch (...) {
     }
 
 
@@ -197,20 +205,32 @@ void BedColl::collapseSingleShift(off_t nshift)
 
 void BedColl::collapseSeqShift(off_t nshift)
 {
-    if (nshift > nsnp - 1) {
-        throw shift_too_large;
-    }
-    for (int i = 1; i <= nshift; i++) {
-        collapseSingleShift(i);
+    try {
+        if (nshift > nsnp - 1) {
+            throw shift_too_large;
+        }
+        for (int i = 1; i <= nshift; i++) {
+            collapseSingleShift(i);
+        }
+    } catch (const std::string& e_string) {
+        cerr << e_string << endl;
+    } catch (...) {
+        cerr << "Unknown error..." << endl;
     }
 }
 
 void BedColl::collapseSeqShift(off_t nshift_start, off_t nshift_end)
 {
-    if (nshift_start < 1 or nshift_end > nsnp - 1) {
-        throw shift_out_of_range;
-    }
-    for (int i = nshift_start; i <= nshift_end; i++) {
-        collapseSingleShift(i);
+    try {
+        if (nshift_start < 1 or nshift_end > nsnp - 1) {
+            throw shift_out_of_range;
+        }
+        for (int i = nshift_start; i <= nshift_end; i++) {
+            collapseSingleShift(i);
+        }
+    } catch (const std::string& e_string) {
+        cerr << e_string << endl;
+    } catch (...) {
+        cerr << "Unknown error..." << endl;
     }
 }

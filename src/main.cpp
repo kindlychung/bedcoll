@@ -1,7 +1,3 @@
-#include <QCoreApplication>
-#include <QString>
-#include <QDir>
-#include <QDebug>
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
@@ -36,17 +32,18 @@ int main(int argc, char *argv[])
     }
     po::notify(vm);
 
-    QString bfile_qstr(bfile.c_str());
-    QDir bpath = QDir::currentPath();
-    QString bpath_qstr = bpath.filePath(bfile_qstr);
+    using namespace boost::filesystem;
+    path bfile_path(bfile);
+    path bpath = absolute(bfile_path);
+    std::string bpath_str = bpath.string();
 
     if(vm.count("allinram"))
     {
-        BedColl mColl(bpath_qstr.toStdString(), true);
+        BedColl mColl(bpath_str, true);
         mColl.collapseSeqShift(nshift_min, nshift_max);
     } else
     {
-        BedColl mColl(bpath_qstr.toStdString(), false);
+        BedColl mColl(bpath_str, false);
         mColl.collapseSeqShift(nshift_min, nshift_max);
     }
 

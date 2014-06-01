@@ -27,3 +27,6 @@ if   len(sys.argv) == 3:
     x.checkall(int(sys.argv[2]))
 elif len(sys.argv) == 2:
     x.checkall()
+else:
+    print(helpmsg)
+    raise Exception("Arguments invalid!")
