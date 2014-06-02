@@ -13,8 +13,10 @@ class Checkcoll:
     def __init__(self, bedpath):
         self.bedpath = bedpath
         self.bedstem, self.bedext = os.path.splitext(bedpath)
+        self.bedpath = self.bedstem + ".bed"
         self.bimpath = self.bedstem + ".bim"
         self.fampath = self.bedstem + ".fam"
+        print(self.bedpath)
         if not os.path.isfile(self.bedpath) or not os.path.isfile(self.bimpath) or not os.path.isfile(self.fampath):
             raise Exception("One of the bed/bim/fam files does not exist!")
         self.shift_files = sorted(glob.glob(self.bedstem + "_shift_*.bed"))
@@ -146,40 +148,43 @@ class Checkcoll:
                 if n_wrong > 0 and os.path.basename(shiftpath) not in self.corrupt_filelist:
                     self.corrupt_filelist.append(os.path.basename(shiftpath))
 
+        finally:
+            print("Check finished for %s." % os.path.basename(shiftpath))
+
+    def checkall(self, ncheck_each=None):
+        try:
+            if not self.shift_files:
+                raise Exception("Collapsed genotype files have not been generated yet, nothing to check.")
+            if ncheck_each != None and ncheck_each > self.nsnp - self.largest_nshift:
+                raise Exception("ncheck_each too large. ")
+
+            for shiftpath in self.shift_files:
+                shiftstem, nshift = self.nshift_stem(shiftpath)
+                snp_pool = range(self.nsnp - nshift - 1)
+
+                ncheck_each_i = 1
+                if ncheck_each == None:
+                    if len(snp_pool) <= 10:
+                        ncheck_each_i = 5
+                    else:
+                        ncheck_each_i = 10
+                else:
+                    ncheck_each_i = ncheck_each
+
+                snp_sample = random.sample(snp_pool, ncheck_each_i)
+                # if you skip 0, then you are at the first SNP, and so on...
+                for snp in snp_sample:
+                    self.checkcoll(shiftpath, snp, 1)
+            if self.corrupt_filelist:
+                print("After sanity check, I found the following file(s) corrupt:")
+                for f in self.corrupt_filelist:
+                    print(f)
+            else:
+                print("I didn't see anything abnormal.")
         except KeyboardInterrupt:
             print("\n\n\nChecking process ended by your request. \nHave a nice day, :-)")
         finally:
             print("Check finished.")
-
-    def checkall(self, ncheck_each=None):
-        if not self.shift_files:
-            raise Exception("Collapsed genotype files have not been generated yet, nothing to check.")
-        if ncheck_each != None and ncheck_each > self.nsnp - self.largest_nshift:
-            raise Exception("ncheck_each too large. ")
-
-        for shiftpath in self.shift_files:
-            shiftstem, nshift = self.nshift_stem(shiftpath)
-            snp_pool = range(self.nsnp - nshift - 1)
-
-            ncheck_each_i = 1
-            if ncheck_each == None:
-                if len(snp_pool) <= 10:
-                    ncheck_each_i = 5
-                else:
-                    ncheck_each_i = 10
-            else:
-                ncheck_each_i = ncheck_each
-
-            snp_sample = random.sample(snp_pool, ncheck_each_i)
-            # if you skip 0, then you are at the first SNP, and so on...
-            for snp in snp_sample:
-                self.checkcoll(shiftpath, snp, 1)
-        if self.corrupt_filelist:
-            print("After sanity check, I found the following file(s) corrupt:")
-            for f in self.corrupt_filelist:
-                print(f)
-        else:
-            print("I didn't see anything abnormal.")
 
     def bedinfo(self):
         bedsize = os.stat(self.bedpath).st_size

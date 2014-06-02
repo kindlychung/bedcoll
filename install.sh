@@ -9,6 +9,6 @@ then
     mkdir $HOME/bin
 fi
 
-chmod a+x    bedcoll bedinfo bimfamgen checkcoll compplink
-sudo cp -avi bedcoll bedinfo bimfamgen checkcoll compplink /usr/local/bin/
-sudo cp -avi checkbed /usr/lib/python3/dist-packages/
+chmod a+x   bedcoll bedinfo.py bimfamgen.py checkcoll.py compplink.py plinkcoll.py
+sudo cp -av bedcoll bedinfo.py bimfamgen.py checkcoll.py compplink.py plinkcoll.py /usr/local/bin/
+sudo cp -av checkbed /usr/lib/python3/dist-packages/
