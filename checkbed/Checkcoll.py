@@ -215,3 +215,7 @@ class Checkcoll:
         else:
             print("There are no collapsed genotype files, why do you want to generate bim and fam files then?")
 
+
+
+
+
