@@ -68,9 +68,9 @@ void BedColl::collapseSingleShift(off_t nshift)
     off_t bytes_shift = bytes_snp * nshift;
     off_t bytes_left = bytes_read - bytes_shift;
     off_t nsnp_left = nsnp - nshift;
-    std::cout << "bytes_shift: " << bytes_shift << "\n";
-    std::cout << "bytes_left: " << bytes_left << "\n";
-    std::cout << "nsnp_left: " << nsnp_left << "\n";
+//    std::cout << "bytes_shift: " << bytes_shift << "\n";
+//    std::cout << "bytes_left: " << bytes_left << "\n";
+//    std::cout << "nsnp_left: " << nsnp_left << "\n";
 
     try {
         // output fam file path
@@ -89,20 +89,10 @@ void BedColl::collapseSingleShift(off_t nshift)
         outbim_leaf % (int)nshift;
         auto bimout = fbranch / (fstem.string() + outbim_leaf.str());
         auto bim_shift_fn = bimout.string();
-        std::string bim_line;
-        ifstream bim_fh;
-        bim_fh.open(bimfn);
-        ofstream bim_shift_fh;
-        bim_shift_fh.open(bim_shift_fn);
-        if (bim_fh.is_open() and bim_shift_fh.is_open()) {
-            for (off_t i = 0; i < nsnp_left; i++) {
-                getline(bim_fh, bim_line);
-                bim_shift_fh << bim_line << "\n";
-            }
-            bim_fh.close();
-            bim_shift_fh.close();
-        } else {
-            throw "Cannot open bim file and / or shift bim file!";
+        // create a symlink for fam file
+        int bimlink_ret = symlink(bimfn.c_str(), bim_shift_fn.c_str());
+        if (bimlink_ret != 0) {
+            throw "Failed to create symlink for bim file!";
         }
     } catch (const string& e) {
         cerr << e << endl;
@@ -129,17 +119,20 @@ void BedColl::collapseSingleShift(off_t nshift)
             fseeko(file_in, 3, SEEK_SET);
             fread(buffer, bytes_read, 1, file_in);
 
-            collres = (unsigned char *)malloc(bytes_left);
+            collres = (unsigned char *)malloc(bytes_read);
+            for(off_t i=0; i<bytes_read; i++) {
+                collres[i] = 0x55;
+            }
             for (off_t i = 0; i < bytes_left; i++) {
                 collres[i] = collgen[buffer[i] * 256 + buffer[i + bytes_shift]];
-                using namespace boost;
-                std::cout << format("%5d  %5d  %5d") % (int)buffer[i] % (int)buffer[i + bytes_shift] % (int)collres[i] << "\n";
+//                using namespace boost;
+//                std::cout << format("%5d  %5d  %5d") % (int)buffer[i] % (int)buffer[i + bytes_shift] % (int)collres[i] << "\n";
             }
 
             outfile = fopen(outfn.c_str(), "w+");
             if (outfile) {
                 fwrite(magicbits, 3, 1, outfile);
-                fwrite(collres, bytes_left, 1, outfile);
+                fwrite(collres, bytes_read, 1, outfile);
             } else {
                 throw file_open_error;
             }
@@ -183,15 +176,19 @@ void BedColl::collapseSingleShift(off_t nshift)
                 fwrite(res_buffer, bytes_iter, 1, outfile);
             }
 
-            res_buffer_remain = (unsigned char *)malloc(bytes_remain);
-            remain_buffer = (unsigned char *)malloc(bytes_remain + bytes_shift);
+            auto all_remain = bytes_remain + bytes_shift;
+            remain_buffer     = (unsigned char *)malloc(all_remain);
+            res_buffer_remain = (unsigned char *)malloc(all_remain);
+            for(off_t i=0; i<all_remain; i++) {
+                res_buffer_remain[i] = 0x55;
+            }
 
             fseeko(file_in, 3 + bytes_all_iters, SEEK_SET);
-            fread(remain_buffer, bytes_remain + bytes_shift, 1, file_in);
+            fread(remain_buffer, all_remain, 1, file_in);
             for (off_t i = 0; i < bytes_remain; i++) {
                 res_buffer_remain[i] = collgen[remain_buffer[i] * 256 + remain_buffer[i + bytes_shift]];
             }
-            fwrite(res_buffer_remain, bytes_remain, 1, outfile);
+            fwrite(res_buffer_remain, all_remain, 1, outfile);
 
             free(buffer);
             free(res_buffer);

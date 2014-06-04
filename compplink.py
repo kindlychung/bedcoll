@@ -32,7 +32,8 @@ _plink()
         return 0
     fi
 }
-complete -F _plink """ 
+complete -F _plink """
+
 completion_string_plink = completion_string_base + plinkname
 completion_string_coll = completion_string_base + collname
 
@@ -43,7 +44,7 @@ if os.path.isfile(completion_path_plink):
     if comp_reply.strip() != "yes":
         print("I leave the original file alone, as you have requested. ")
         pass
-        
+
 completion_path_coll = "/etc/bash_completion.d/plinkcoll.py"
 if os.path.exists(completion_path_coll):
     print("Completion script %s already exists." % completion_path_coll)
@@ -51,7 +52,7 @@ if os.path.exists(completion_path_coll):
     if comp_reply.strip() != "yes":
         print("I leave the original file alone, as you have requested.")
         exit(0)
-        
+
 try:
     with open(completion_path_plink, "w") as fh:
         fh.write(completion_string_plink)
