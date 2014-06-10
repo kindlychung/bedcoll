@@ -26,8 +26,9 @@ bfile = sys.argv[bfile_index]
 bfile, ext = os.path.splitext(bfile)
 sys.argv[bfile_index] = bfile
 out_opt = ["--out", bfile]
-# print([plink_bin] + sys.argv[1:] + out_opt)
-subprocess.Popen([plink_bin] + sys.argv[1:] + out_opt)
+print([plink_bin] + sys.argv[1:] + out_opt)
+# subprocess.Popen([plink_bin] + sys.argv[1:] + out_opt, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+subprocess.call([plink_bin] + sys.argv[1:] + out_opt)
 
 
 bfile_coll = Checkcoll(bfile)
@@ -38,7 +39,8 @@ if shift_bedfiles:
         out_opt = ["--out", shift_bedfiles[i]]
         sys.argv[bfile_index] = shift_bedfiles[i]
 #         print([plink_bin] + sys.argv[1:] + out_opt)
-        subprocess.Popen([plink_bin] + sys.argv[1:] + out_opt)
+#         subprocess.Popen([plink_bin] + sys.argv[1:] + out_opt, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.call([plink_bin] + sys.argv[1:] + out_opt)
     
 
 # print(bfile)

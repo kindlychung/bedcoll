@@ -9,46 +9,46 @@
 @----------------------------------------------------------@
 
 Skipping web check... [ --noweb ] 
-Writing this text to log file [ test1.log ]
-Analysis started: Wed Jun  4 15:55:19 2014
+Writing this text to log file [ test2.log ]
+Analysis started: Wed Jun  4 15:58:07 2014
 
 Options in effect:
 	--noweb
 	--allow-no-sex
-	--bfile test1
+	--bfile test2
 	--linear
-	--out test1
-	--pheno test1.phe
+	--out test2
+	--pheno test2.phe
 	--pheno-name height
 
-Reading map (extended format) from [ test1.bim ] 
-3 markers to be included from [ test1.bim ]
-Reading pedigree information from [ test1.fam ] 
-12 individuals read from [ test1.fam ] 
+Reading map (extended format) from [ test2.bim ] 
+3 markers to be included from [ test2.bim ]
+Reading pedigree information from [ test2.fam ] 
+12 individuals read from [ test2.fam ] 
 6 individuals with nonmissing phenotypes
 Assuming a disease phenotype (1=unaff, 2=aff, 0=miss)
 Missing phenotype value is also -9
 6 cases, 0 controls and 6 missing
 12 males, 0 females, and 0 of unspecified sex
-Reading genotype bitfile from [ test1.bed ] 
+Reading genotype bitfile from [ test2.bed ] 
 Detected that binary PED file is v1.00 SNP-major mode
-Reading alternate phenotype from [ test1.phe ] 
+Reading alternate phenotype from [ test2.phe ] 
 12 individuals with non-missing alternate phenotype
 Assuming a quantitative trait
 Missing phenotype value is -9
 Before frequency and genotyping pruning, there are 3 SNPs
 8 founders and 4 non-founders found
-1 SNPs with no founder genotypes observed
+3 SNPs with no founder genotypes observed
 Warning, MAF set to 0 for these SNPs (see --nonfounders)
-Writing list of these SNPs to [ test1.nof ]
-Total genotyping rate in remaining individuals is 0.583333
+Writing list of these SNPs to [ test2.nof ]
+Total genotyping rate in remaining individuals is 0
 0 SNPs failed missingness test ( GENO > 1 )
 0 SNPs failed frequency test ( MAF < 0 )
 After frequency and genotyping pruning, there are 3 SNPs
 After filtering, 12 individuals with non-missing status
 After filtering, 12 males, 0 females, and 0 of unspecified sex
 Converting data to Individual-major format
-Writing linear model association results to [ test1.assoc.linear ] 
+Writing linear model association results to [ test2.assoc.linear ] 
 
-Analysis finished: Wed Jun  4 15:55:19 2014
+Analysis finished: Wed Jun  4 15:58:07 2014
 

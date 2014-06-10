@@ -68,9 +68,9 @@ void BedColl::collapseSingleShift(off_t nshift)
     off_t bytes_shift = bytes_snp * nshift;
     off_t bytes_left = bytes_read - bytes_shift;
     off_t nsnp_left = nsnp - nshift;
-    std::cout << "bytes_shift: " << bytes_shift << "\n";
-    std::cout << "bytes_left: " << bytes_left << "\n";
-    std::cout << "nsnp_left: " << nsnp_left << "\n";
+//    std::cout << "bytes_shift: " << bytes_shift << "\n";
+//    std::cout << "bytes_left: " << bytes_left << "\n";
+//    std::cout << "nsnp_left: " << nsnp_left << "\n";
 
     try {
         // output fam file path
@@ -132,8 +132,8 @@ void BedColl::collapseSingleShift(off_t nshift)
             collres = (unsigned char *)malloc(bytes_left);
             for (off_t i = 0; i < bytes_left; i++) {
                 collres[i] = collgen[buffer[i] * 256 + buffer[i + bytes_shift]];
-                using namespace boost;
-                std::cout << format("%5d  %5d  %5d") % (int)buffer[i] % (int)buffer[i + bytes_shift] % (int)collres[i] << "\n";
+//                using namespace boost;
+//                std::cout << format("%5d  %5d  %5d") % (int)buffer[i] % (int)buffer[i + bytes_shift] % (int)collres[i] << "\n";
             }
 
             outfile = fopen(outfn.c_str(), "w+");

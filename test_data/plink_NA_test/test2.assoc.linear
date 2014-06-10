@@ -1,0 +1,4 @@
+ CHR  SNP         BP   A1       TEST    NMISS       BETA         STAT            P 
+   1 snp1          1    0        ADD        0         NA           NA           NA
+   1 snp2          2    0        ADD        0         NA           NA           NA
+   1 snp3          3    0        ADD        0         NA           NA           NA
