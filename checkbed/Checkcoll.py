@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import math
 import os
 import subprocess
 import shutil
@@ -22,7 +23,7 @@ class Checkcoll:
         self.shift_files = sorted(glob.glob(self.bedstem + "_shift_*.bed"))
         self.nsnp           = self.countlines(self.bimpath)
         self.nindiv         = self.countlines(self.fampath)
-        self.bytes_snp      = self.nindiv // 4 + 1
+        self.bytes_snp      = math.ceil(self.nindiv / 4)
         self.bytes_total    = self.bytes_snp * self.nsnp
         if self.shift_files:
             self.largest_nshift = self.nshift_stem(self.shift_files[-1])[1]
@@ -209,11 +210,12 @@ class Checkcoll:
                     os.remove(shiftfam)
 
                 os.symlink(self.fampath, shiftfam)
-                with open(shiftbim, "w") as shiftbim_fh, open(self.bimpath, "r") as bim_fh:
-                    first_snps = "".join(list(islice(bim_fh, nsnp_left)))
-                    shiftbim_fh.write(first_snps)
+                os.symlink(self.bimpath, shiftbim)
+                # with open(shiftbim, "w") as shiftbim_fh, open(self.bimpath, "r") as bim_fh:
+                #     first_snps = "".join(list(islice(bim_fh, nsnp_left)))
+                #     shiftbim_fh.write(first_snps)
         else:
-            print("There are no collapsed genotype files, why do you want to generate bim and fam files then?")
+            print("There are no collapsed genotype files, why do you want to generate bim and fam files then? :P")
 
 
 
