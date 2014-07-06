@@ -7,6 +7,7 @@ CFLAGS += -I/usr/include/qt4/Qt
 CFLAGS += -I/usr/include/qt4
 linkflags += -lboost_system 
 linkflags += -lboost_filesystem
+linkflags += -lboost_program_options
 !cc =    |> g++ %f $(CFLAGS)       -c -o %o |> %B.o
 !ccpic = |> g++ %f $(CFLAGS) -fPIC -c -o %o |> %B.o
 !so = |> g++ %f -shared -o %o |>

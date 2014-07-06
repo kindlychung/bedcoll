@@ -12,11 +12,11 @@ fi
 chmod a+x   \
     bedcoll bedinfo.py bimfamgen.py \
     checkcoll.py compplink.py plinkcoll.py \
-    cleanPlinkout.py
+    cleanPlinkout.py removeAllLinks.sh
 sudo cp -av \
     bedcoll bedinfo.py bimfamgen.py \
     checkcoll.py compplink.py plinkcoll.py \
-    cleanPlinkout.py \
+    cleanPlinkout.py removeAllLinks.sh \
     /usr/local/bin/
 sudo cp -av checkbed /usr/lib/python3/dist-packages/
 
