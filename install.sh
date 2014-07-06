@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # you need to install either qt5-qmake or qt4-qmake
-sudo apt-get install libboost-filesystem-dev libboost-system-dev libboost-program-options-dev python3
+sudo apt-get install libboost-filesystem-dev \
+    libboost-system-dev libboost-program-options-dev \
+    python3 clang-3.5
 # qmake bedcollqt.pro -r -spec linux-clang && make
 tup upd
 
