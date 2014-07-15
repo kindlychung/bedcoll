@@ -30,16 +30,17 @@ try:
         # line counter
         n_line = 0
         # read the first line
-        firstline = fh.readline()
-        m_firstline = re.sub(r' {2,}', r' ', firstline)
-        sys.stdout.write(m_firstline)
+        firstline = fh.readline().lstrip()
+        firstline = re.sub(r' {2,}', r' ', firstline)
+        sys.stdout.write(firstline)
         n_line += 1
         # filter the rest
         for line in fh:
+            line = line.lstrip()
             # only take results of the first predictor, as the others are covariates
             if (n_line % n_predictors) == 1:
-                merged_spaces = re.sub(r' {2,}', r' ', line)
-                sys.stdout.write(merged_spaces)
+                line = re.sub(r' {2,}', r' ', line)
+                sys.stdout.write(line)
             n_line = n_line + 1
 except IOError as e:
     if e.errno == errno.EPIPE:

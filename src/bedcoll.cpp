@@ -123,8 +123,8 @@ void BedColl::collapseSingleShift(off_t nshift)
             buffer = (unsigned char *)malloc(bytes_read);
             if (!buffer) {
                 fprintf(stderr, "Memory error!");
-                throw file_open_error;
                 fclose(file_in);
+                throw file_open_error;
             }
             fseeko(file_in, 3, SEEK_SET);
             fread(buffer, bytes_read, 1, file_in);
