@@ -15,19 +15,20 @@ BedColl::BedColl(std::string fn, bool allinram) :
         bedfn = fbed.string();
         bimfn = fbim.string();
         famfn = ffam.string();
+        std::cout << "bed file path: " << bedfn << "\n";
+        std::cout << "fam file path: " << famfn << "\n";
+        std::cout << "bim file path: " << bimfn << "\n";
 
         nsnp = countlines(bimfn);
         nindiv = countlines(famfn);
         bytes_snp = ceil(nindiv / 4.0);
+        std::cout << "Each SNP contains " << bytes_snp << " bytes of data\n";
         bytes_read = bytes_snp * nsnp;
+        std::cout << "All SNPs use " << bytes_read << " bytes of data\n";
         bed_filesize = fileSize(bedfn);
+        std::cout << "bed file use " << bed_filesize << " bytes of data\n";
 
         if (bed_filesize != (bytes_read + 3)) {
-            cout << "error initialization" << endl;
-            cout << bed_filesize << endl;
-            cout << nsnp << endl;
-            cout << nindiv << endl;
-            cout << bytes_read << endl;
             throw conflict_bed_bim_fam;
         }
 
@@ -68,21 +69,35 @@ void BedColl::collapseSingleShift(off_t nshift)
     off_t bytes_shift = bytes_snp * nshift;
     off_t bytes_left = bytes_read - bytes_shift;
     off_t nsnp_left = nsnp - nshift;
-//    std::cout << "bytes_shift: " << bytes_shift << "\n";
-//    std::cout << "bytes_left: " << bytes_left << "\n";
-//    std::cout << "nsnp_left: " << nsnp_left << "\n";
+    std::cout << "You requested to shift " << nshift << "SNPs\n";
+    std::cout << "Each SNP contains " << bytes_snp << " bytes of data\n";
+    std::cout << "Therefore I will shift " << bytes_shift << " bytes\n";
+    std::cout << "After shifting there are " << bytes_left << " bytes of data left\n";
+    std::cout << "which is to say, " << nsnp_left << " SNPs left\n";
 
     try {
-//        // output fam file path
-//        boost::format outfam_leaf("_shift_%04d.fam");
-//        outfam_leaf % (int)nshift;
-//        auto famout = fbranch / (fstem.string() + outfam_leaf.str());
-//        auto fam_shift_fn = famout.string();
-//        // create a symlink for fam file
-//        int famlink_ret = symlink(famfn.c_str(), fam_shift_fn.c_str());
-//        if (famlink_ret != 0) {
-//            throw "Failed to create symlink for fam file!";
-//        }
+
+        // linking bim file
+        boost::format outbim_leaf("_shift_%04d.bim");
+        outbim_leaf % (int)nshift;
+        auto bimout = fbranch / (fstem.string() + outbim_leaf.str());
+        auto bim_shift_fn = bimout.string();
+        std::cout << "Creating a symlink for " << bim_shift_fn << "\n";
+        int bimlink_ret = symlink(bimfn.c_str(), bim_shift_fn.c_str());
+        if (bimlink_ret != 0) {
+            throw "Failed to create symlink for bim file!";
+        }
+
+        // linking fam file
+        boost::format outfam_leaf("_shift_%04d.fam");
+        outfam_leaf % (int)nshift;
+        auto famout = fbranch / (fstem.string() + outfam_leaf.str());
+        auto fam_shift_fn = famout.string();
+        std::cout << "Creating a symlink for " << fam_shift_fn << "\n";
+        int famlink_ret = symlink(famfn.c_str(), fam_shift_fn.c_str());
+        if (famlink_ret != 0) {
+            throw "Failed to create symlink for fam file!";
+        }
 
 //        // output bim file path
 //        boost::format outbim_leaf("_shift_%04d.bim");

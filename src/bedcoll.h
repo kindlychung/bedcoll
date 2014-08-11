@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unistd.h>
+#include <cmath>
 #include <stdio.h>
 #include <stdlib.h>
 #include <boost/filesystem.hpp>

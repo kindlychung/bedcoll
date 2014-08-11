@@ -2,9 +2,7 @@ CFLAGS += -Wall
 CFLAGS += -O3
 CFLAGS += -std=c++11
 CFLAGS += -D_FILE_OFFSET_BITS=64
-CFLAGS += -I/usr/include/qt4/QtCore
-CFLAGS += -I/usr/include/qt4/Qt
-CFLAGS += -I/usr/include/qt4
+linkflags += -L/usr/local/lib
 linkflags += -lboost_system 
 linkflags += -lboost_filesystem
 linkflags += -lboost_program_options

@@ -2,8 +2,8 @@
 
 off_t fileSize(std::string fn)
 {
-    struct stat64 fsStatBuf;
-    stat64(fn.c_str(), &fsStatBuf);
+    struct stat fsStatBuf;
+    stat(fn.c_str(), &fsStatBuf);
     off_t fileLen = fsStatBuf.st_size;
     return fileLen;
 }

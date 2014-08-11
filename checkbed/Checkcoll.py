@@ -11,29 +11,37 @@ from itertools import islice
 
 
 class Checkcoll:
-    def __init__(self, bedpath):
-        self.bedpath = bedpath
-        self.bedstem, self.bedext = os.path.splitext(bedpath)
+    def __init__(self, bedstem):
+        self.bedstem = bedstem
         self.bedpath = self.bedstem + ".bed"
         self.bimpath = self.bedstem + ".bim"
         self.fampath = self.bedstem + ".fam"
-        print(self.bedpath)
+        print("bed file path: " + self.bedpath)
+        print("bim file path: " + self.bimpath)
+        print("fam file path: " + self.fampath)
         if not os.path.isfile(self.bedpath) or not os.path.isfile(self.bimpath) or not os.path.isfile(self.fampath):
             raise Exception("One of the bed/bim/fam files does not exist!")
+
         self.shift_files = sorted(glob.glob(self.bedstem + "_shift_*.bed"))
+        print("List of shifted bed files: ")
+        print(self.shift_files[:10])
+        print("......")
+
         self.nsnp           = self.countlines(self.bimpath)
         self.nindiv         = self.countlines(self.fampath)
         self.bytes_snp      = math.ceil(self.nindiv / 4)
         self.bytes_total    = self.bytes_snp * self.nsnp
+        print("Number of SNPs: " + str(self.nsnp))
+        print("Number of individuals: " + str(self.nindiv))
+        print("Each SNP uses " + str(self.bytes_snp) + " bytes")
+        print("All SNPs use " + str(self.bytes_total) + " bytes in total")
+
         if self.shift_files:
             self.largest_nshift = self.nshift_stem(self.shift_files[-1])[1]
         else:
             self.largest_nshift = 0
 
         self.corrupt_filelist = []
-
-        # if bimpath not found, raise exception
-        # if fampath not found, raise exception
 
         self.greet = """
         bed file:           {}
@@ -81,10 +89,16 @@ class Checkcoll:
         shiftstem, ext = os.path.splitext(shiftpath)
         stempath, nshift = shiftstem.split("_shift_")
         nshift = int(nshift)
+        print("Stem of shifted bed file: " + shiftstem)
+        print("Number of shifts: " + str(nshift))
         return (shiftstem, nshift)
 
     def checkcoll(self, shiftpath, nskip, nsnp_to_check):
         shiftstem, nshift = self.nshift_stem(shiftpath)
+        if nshift == 0:
+            print("File not shifted, no need to check.")
+            return 0;
+
         logpath = shiftstem + ".log"
 
         nsnp_left   = self.nsnp - nshift
@@ -92,6 +106,7 @@ class Checkcoll:
         bytes_shift = self.bytes_snp * nshift
         bytes_left  = self.bytes_total - bytes_shift - bytes_skip
         bytes_to_check = self.bytes_snp * nsnp_to_check
+
         if(nsnp_to_check > nsnp_left - nskip):
             raise Exception("There are not so many SNPs to check!")
 

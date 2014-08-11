@@ -32,7 +32,7 @@ _plink()
         return 0
     fi
 }
-complete -F _plink """ + plinkname
+complete -F _plink """ + plinkname + "\n\n\n"
 
 completion_string_coll = """
 _plinkcoll.py()
@@ -50,8 +50,12 @@ _plinkcoll.py()
         return 0
     fi
 }
-complete -F _plinkcoll.py """ + collname
+complete -F _plinkcoll.py """ + collname + "\n\n\n"
 
+
+
+if not os.path.exists("/etc/bash_completion.d"):
+    os.mkdir("/etc/bash_completion.d")
 
 completion_path_plink = "/etc/bash_completion.d/%s" % plinkname
 if os.path.isfile(completion_path_plink):
@@ -70,7 +74,7 @@ if os.path.exists(completion_path_coll):
         exit(0)
 
 try:
-    with open(completion_path_plink, "w") as fh:
+    with open("", "a") as fh:
         fh.write(completion_string_plink)
 except PermissionError:
     print("Permission denied while trying to write to file:")
