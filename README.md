@@ -20,7 +20,7 @@
 
     * On Mac OSX
 
-    # not sure how I got libfuse and libc installed on my mac
+    // not sure how I got libfuse and libc installed on my mac
     git clone git://github.com/gittup/tup.git
 
 # Compile and install
