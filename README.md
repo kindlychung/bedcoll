@@ -15,13 +15,13 @@
 
     * On Linux
 
-        sudo apt-get install libfuse-dev libc6-dev-i386
-        git clone git://github.com/gittup/tup.git
+    `sudo apt-get install libfuse-dev libc6-dev-i386`
+    `git clone git://github.com/gittup/tup.git`
 
     * On Mac OSX
 
-        // not sure how I got libfuse and libc installed on my mac
-        git clone git://github.com/gittup/tup.git
+    `// not sure how I got libfuse and libc installed on my mac`
+    `git clone git://github.com/gittup/tup.git`
 
 # Compile and install
 
