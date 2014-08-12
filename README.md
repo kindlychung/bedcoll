@@ -5,11 +5,11 @@
 
     * On Linux
 
-    sudo apt-get install libboost1.55-all-dev
+    `sudo apt-get install libboost1.55-all-dev`
 
     * On Mac OSX
 
-    brew install boost
+    `brew install boost`
 
 * You need tup if you want to compile bedcoll:
 
