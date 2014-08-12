@@ -19,14 +19,28 @@
 
     `git clone git://github.com/gittup/tup.git`
 
+    `cd tup`
+
+    `./bootstrap.sh`
+
     * On Mac OSX
 
     `// not sure how I got libfuse and libc installed on my mac`
 
     `git clone git://github.com/gittup/tup.git`
 
+    `cd tup`
+
+    `./bootstrap.sh`
+
+    * In either case you need to copy the executable `tup` to your path, for example
+
+    `sudo cp -av tup /usr/local/bin`
+
 # Compile and install
 
+    git clone https://github.com/kindlychung/bedcoll
+    cd bedcoll
     tup upd
     ./install.sh
 
